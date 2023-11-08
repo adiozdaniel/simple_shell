@@ -54,7 +54,7 @@ int main(int ac, char **av)
 	(void) ac;
 
 	set_data(&datash, av);
-	shell_loop(&datash);
+	shell(&datash);
 	free_data(&datash);
 	if (datash.status < 0)
 		return (255);
