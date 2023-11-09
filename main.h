@@ -165,8 +165,11 @@ int check_vars(r_var **h, char *in, char *st, data_shell *data);
 char *replaced_input(r_var **head, char *input, char *new_input, int nlen);
 char *rep_var(char *input, data_shell *datash);
 
-/* read-line */
+/* read-line, _line0.c, _line.c */
 char *read_line(int *i_eof);
+void bring_line(char **lineptr, size_t *n, char *buffer, size_t j);
+ssize_t get_line(char **lineptr, size_t *n, FILE *stream);
+int exec_line(data_shell *datash);
 
 /* _sigint */
 void get_sigint(int sig);
