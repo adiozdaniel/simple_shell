@@ -141,10 +141,16 @@ int get_error(data_shell *datash, int eval);
 char *without_comment(char *in);
 void shell(data_shell *datash);
 
-/* _help2.c */
+/* _help0.c, _help.c, _help2.c */
 void aux_help(void);
 void aux_help_alias(void);
 void aux_help_cd(void);
+void aux_help_env(void);
+void aux_help_setenv(void);
+void aux_help_unsetenv(void);
+void aux_help_general(void);
+void aux_help_exit(void);
+int get_help(data_shell *datash);
 
 /* _sigint */
 void get_sigint(int sig);
