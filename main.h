@@ -165,7 +165,8 @@ int check_vars(r_var **h, char *in, char *st, data_shell *data);
 char *replaced_input(r_var **head, char *input, char *new_input, int nlen);
 char *rep_var(char *input, data_shell *datash);
 
-
+/* read-line */
+char *read_line(int *i_eof);
 
 /* _sigint */
 void get_sigint(int sig);
