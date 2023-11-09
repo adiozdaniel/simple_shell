@@ -176,6 +176,14 @@ void _memcpy(void *newptr, const void *ptr, unsigned int size);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char **_reallocdp(char **ptr, unsigned int old_size, unsigned int new_size);
 
+/* _lists.c, _lists2.c */
+sep_list *add_sep_node_end(sep_list **head, char sep);
+void free_sep_list(sep_list **head);
+line_list *add_line_node_end(line_list **head, char *line);
+void free_line_list(line_list **head);
+r_var *add_rvar_node(r_var **head, int lvar, char *val, int lval);
+void free_rvar_list(r_var **head);
+
 /* _sigint */
 void get_sigint(int sig);
 
