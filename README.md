@@ -46,8 +46,8 @@ Our shell has support for the following built-in commands:
 
 Feel free to reach out with any questions, suggestions, or contributions to:
 
-* **Eng. Happy Chukwuma**
-  * [Contact Eng. Happy Chukwuma](mailto:<happychukwuma@gmail.com>?subject=[_Collaboration_on_SIMPLE_SHELL])
+* **Engr. Happy Felix Chukwuma**
+  * [Contact Engr. Happy Chukwuma](mailto:<happychukwuma@gmail.com>?subject=[_Collaboration_on_SIMPLE_SHELL])
 
-* **Eng. Adioz Daniel**
-  * [Contact Eng. Adioz Daniel](mailto:<adiozdaniel@gmail.com>?subject=[_Collaboration_on_SIMPLE_SHELL])
+* **Engr. Adioz Daniel**
+  * [Contact Engr. Adioz Daniel](mailto:<adiozdaniel@gmail.com>?subject=[_Collaboration_on_SIMPLE_SHELL])

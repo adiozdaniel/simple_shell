@@ -45,11 +45,12 @@ void shell(data_shell *datash)
 {
 	int loop, i_eof;
 	char *input;
+	char *prompt = "Happy&Daniel-Shell: ";
 
 	loop = 1;
 	while (loop == 1)
 	{
-		write(STDIN_FILENO, "^-^ ", 4);
+		write(STDIN_FILENO, prompt, _strlen(prompt));
 		input = read_line(&i_eof);
 		if (i_eof != -1)
 		{

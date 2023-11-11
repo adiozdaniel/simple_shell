@@ -109,8 +109,8 @@ void cd_previous(data_shell *datash)
 
 	p_pwd = _getenv("PWD", datash->_environ);
 
-	write(STDOUT_FILENO, p_pwd, _strlen(p_pwd));
-	write(STDOUT_FILENO, "\n", 1);
+	_print(p_pwd);
+	_print("\n");
 
 	free(cp_pwd);
 	if (p_oldpwd)

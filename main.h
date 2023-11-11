@@ -157,6 +157,10 @@ void _help_general(void);
 void _help_exit(void);
 int get_help(data_shell *datash);
 
+/* prints functiions */
+int _print(char *string);
+int _printerr(char *string);
+
 /* split.c */
 char *swap_char(char *input, int bool);
 void add_nodes(sep_list **head_s, line_list **head_l, char *input);

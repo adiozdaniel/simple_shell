@@ -19,3 +19,14 @@ int exec_line(data_shell *datash)
 
 	return (cmd_exec(datash));
 }
+
+/**
+ * get_sigint - Handle the crtl + c call in the prompt
+ * @sig: Signal handler
+*/
+
+void get_sigint(int sig)
+{
+	(void)sig;
+	_print("\nHappy&Daniel-Shell: ");
+}
