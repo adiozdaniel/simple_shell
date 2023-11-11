@@ -1,12 +1,12 @@
 #include "main.h"
 
 /**
- * without_comment - deletes comments from the input
+ * no_comment - deletes comments from the input
  *
  * @in: input string
  * Return: input without comments
  */
-char *without_comment(char *in)
+char *no_comment(char *in)
 {
 	int i, up_to;
 
@@ -36,12 +36,12 @@ char *without_comment(char *in)
 }
 
 /**
- * shell_loop - Loop of shell
+ * shell - Loop of shell
  * @datash: data relevant (av, input, args)
  *
  * Return: no return.
  */
-void shell_loop(data_shell *datash)
+void shell(data_shell *datash)
 {
 	int loop, i_eof;
 	char *input;
@@ -53,7 +53,7 @@ void shell_loop(data_shell *datash)
 		input = read_line(&i_eof);
 		if (i_eof != -1)
 		{
-			input = without_comment(input);
+			input = no_comment(input);
 			if (input == NULL)
 				continue;
 

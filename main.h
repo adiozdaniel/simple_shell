@@ -137,19 +137,24 @@ char *error_permission(char **args);
 char *error_path_126(data_shell *datash);
 int get_error(data_shell *datash, int eval);
 
+/* _stdlib.c */
+int get_len(int n);
+char *get_itoa(int n);
+int _itoa(char *s);
+
 /* shell */
-char *without_comment(char *in);
+char *no_comment(char *in);
 void shell(data_shell *datash);
 
 /* _help0.c, _help.c, _help2.c */
-void aux_help(void);
-void aux_help_alias(void);
-void aux_help_cd(void);
-void aux_help_env(void);
-void aux_help_setenv(void);
-void aux_help_unsetenv(void);
-void aux_help_general(void);
-void aux_help_exit(void);
+void _help(void);
+void _help_alias(void);
+void _help_cd(void);
+void _help_env(void);
+void _help_setenv(void);
+void _help_unsetenv(void);
+void _help_general(void);
+void _help_exit(void);
 int get_help(data_shell *datash);
 
 /* split.c */
@@ -187,7 +192,7 @@ void free_rvar_list(r_var **head);
 /* _sigint */
 void get_sigint(int sig);
 
-/* _str 1 & 2 */
+/* _str 1, 2 & 3 */
 char *_strcat(char *dest, const char *src);
 char *_strcpy(char *dest, char *src);
 int _strcmp(char *s1, char *s2);
@@ -198,6 +203,7 @@ int _strlen(const char *s);
 int cmp_chars(char str[], const char *delim);
 char *_strtok(char str[], const char *delim);
 int _isdigit(const char *s);
+void rev_string(char *s);
 
 /* _exit */
 int exit_shell(data_shell *datash);
