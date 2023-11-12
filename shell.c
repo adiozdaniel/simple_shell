@@ -45,7 +45,7 @@ void shell(data_shell *datash)
 {
 	int loop, i_eof;
 	char *input;
-	char *prompt = "Happy&Daniel-Shell: ";
+	char *prompt = "Happy&Adioz-Shell: ";
 
 	loop = 1;
 	while (loop == 1)
