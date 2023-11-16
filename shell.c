@@ -42,7 +42,6 @@ char *no_comment(char *in)
  * Return: no return.
  */
 
-
 void shell(data_shell *datash)
 {
     int loop = 1;
@@ -72,67 +71,69 @@ void shell(data_shell *datash)
                 continue;
             }
 
-            // Print raw input for inspection
-            // printf("Raw Input: %s\n", input);
-
             /* Check if the word "alias" is present in the input */
             if (strstr(clean_input, "alias") != NULL)
             {
+                /* Handle the case where "alias" is present */
+                // printf("Alias command detected: %s\n", clean_input);
 
-	                /* Handle the case where "alias" is present */
-	                printf("Alias command detected: %s\n", clean_input);
-	
-	                // If the user types "alias," display the aliases
-	                if (strncmp(clean_input, "alias", 5) == 0 && strlen(clean_input) == 5)
-	                {
-	                    printf("Display aliases:\n");
-	                    // Display aliases logic here
-	                    free(clean_input);
-	                    continue;
-	                }
-	
-	                // If we have "alias" in the command line
-	                if (strncmp(clean_input, "alias ", 6) == 0 && strlen(clean_input) > 6)
-	                {
-	                    char **alias_names, **alias_values;
-			            char *alias_value = get_alias(datash, clean_input);
-			
-			            if (alias_value != NULL)
-			            {
-			                // If the command is an alias, replace it with the alias value
-			                free(clean_input);
-			                input = strdup(alias_value);
-			                continue;
-			            }
-	                    // Parse alias command to get alias_names and alias_values
-	                    if (parse_alias_command(clean_input, &alias_names, &alias_values) == 0)
-	                    {
-	                        // Print values for debugging
-	                        printf("Parsed alias: name='%s', value='%s'\n", alias_names[0], alias_values[0]);
-	
-	                        // Add the alias to your data structure
-	                        if (alias_names[0] != NULL && alias_values[0] != NULL)
-	                        {
-	                            add_alias(datash, alias_names[0], alias_values[0]);
-	                            printf("Alias added: %s='%s'\n", alias_names[0], alias_values[0]);
-	                        }
-	
-	                        // Free memory
-	                        free(alias_names[0]);
-	                        free(alias_values[0]);
-	                        free(alias_names);
-	                        free(alias_values);
-	                    }
-	                    else
-	                    {
-	                        // Handle parsing error
-	                        printf("There was an error parsing\n");
-	                        fprintf(stderr, "Error parsing alias command: %s\n", clean_input);
-	                    }
-	
-	                    free(clean_input); // Free the cleaned input
-	                    continue;
-	                }
+                // If the user types "alias," display the aliases
+                if (strncmp(clean_input, "alias", 5) == 0 && strlen(clean_input) == 5)
+                {
+                    printf("Display all aliases");
+                    // Display aliases logic here
+                    free(clean_input);
+                    continue;
+                }
+
+                // If we have "alias" in the command line
+                if (strncmp(clean_input, "alias ", 6) == 0 && strlen(clean_input) > 6)
+                {
+
+                printf("this is a new alias\n");
+
+                /* The moment the code hits these declarations, it fails*/
+                    char **alias_names = NULL, **alias_values = NULL;
+					char *alias_value = get_alias(datash, clean_input);
+
+					// get_alias(datash, clean_input);
+                    if (alias_value != NULL)
+                    {
+                        // If the command is an alias, replace it with the alias value
+                        free(clean_input);
+                        input = strdup(alias_value);
+                        continue;
+                    }
+
+                    // Parse alias command to get alias_names and alias_values
+                    if (parse_alias_command(clean_input, &alias_names, &alias_values) == 0)
+                    {
+                        // Print values for debugging
+                        printf("Parsed alias: name='%s', value='%s'\n", alias_names[0], alias_values[0]);
+
+                        // Add the alias to your data structure
+                        if (alias_names[0] != NULL && alias_values[0] != NULL)
+                        {
+                            add_alias(datash, alias_names[0], alias_values[0]);
+                            printf("Alias added: %s='%s'\n", alias_names[0], alias_values[0]);
+                        }
+
+                        // Free memory
+                        free(alias_names[0]);
+                        free(alias_values[0]);
+                        free(alias_names);
+                        free(alias_values);
+                    }
+                    else
+                    {
+                        // Handle parsing error
+                        printf("There was an error parsing\n");
+                        fprintf(stderr, "Error parsing alias command: %s\n", clean_input);
+                    }
+
+                    free(clean_input); // Free the cleaned input
+                    continue;
+                }
             }
             else
             {

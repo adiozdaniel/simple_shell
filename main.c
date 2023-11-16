@@ -13,6 +13,15 @@ void free_data(data_shell *datash)
 
 	free(datash->_environ);
 	free(datash->pid);
+
+	    // Free alias-related memory
+    for (i = 0; datash->alias_names[i] != NULL; i++) {
+        free(datash->alias_names[i]);
+        free(datash->alias_values[i]);
+    }
+
+    free(datash->alias_names);
+    free(datash->alias_values);
 }
 
 /**
@@ -40,6 +49,12 @@ void set_data(data_shell *datash, char **av)
 
 	datash->_environ[i] = NULL;
 	datash->pid = get_itoa(getpid());
+
+	/* initialise alias table */
+    datash->alias_names = malloc(sizeof(char *) * 1);  // Allocate space for one pointer
+    datash->alias_values = malloc(sizeof(char *) * 1); // Allocate space for one pointer
+    datash->alias_names[0] = NULL;
+    datash->alias_values[0] = NULL;
 }
 
 /**

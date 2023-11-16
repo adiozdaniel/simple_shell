@@ -1,10 +1,10 @@
 #include "main.h"
 
 // Function to add an alias
-// Function to add an alias
 void add_alias(data_shell *datash, char *alias_name, char *alias_value)
 {
     printf("hi, we are here: %s\n", alias_name);
+
     // Check if the alias already exists
     for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
@@ -34,18 +34,32 @@ void add_alias(data_shell *datash, char *alias_name, char *alias_value)
 }
 
 // Function to get an alias value
+// Function to get an alias value
 char *get_alias(data_shell *datash, char *alias_name)
 {
+    printf("%s: ", alias_name);
+
+    // Check if datash is NULL
+    if (datash == NULL || datash->alias_names == NULL || alias_name == NULL)
+    {
+        // Add appropriate error handling or return value if necessary
+        return NULL;
+    }
+
+    // Iterate over alias_names array
     for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
+        // Check if alias_names[i] and alias_values[i] are not NULL
         if (datash->alias_names[i] != NULL && datash->alias_values[i] != NULL &&
             strcmp(datash->alias_names[i], alias_name) == 0)
         {
             return datash->alias_values[i];
         }
     }
+
     return NULL;
 }
+
 
 // Function to parse the alias command
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values)
