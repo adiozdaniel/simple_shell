@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <limits.h>
+#include <string.h>
 
 #define BUFSIZE 1024
 #define TOK_BUFSIZE 128
@@ -35,6 +36,9 @@ typedef struct data
 	int counter;
 	char **_environ;
 	char *pid;
+	/* alias*/
+	char **alias_names;
+	char **alias_values;
 } data_shell;
 
 /**
@@ -90,6 +94,11 @@ typedef struct r_var_list
 
 /*_builtins*/
 int (*get_builtin(char *cmd))(data_shell *datash);
+
+/* _alias */
+void add_alias(data_shell *datash, char *alias_name, char *alias_value);
+char *get_alias(data_shell *datash, char *alias_name);
+int parse_alias_command(const char *input, char ***alias_names, char ***alias_values);
 
 /* syntax_checker */
 int repeated_char(char *input, int i);

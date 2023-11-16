@@ -131,42 +131,52 @@ void go_next(sep_list **list_s, line_list **list_l, data_shell *datash)
  */
 int split_commands(data_shell *datash, char *input)
 {
+    sep_list *head_s, *list_s;
+    line_list *head_l, *list_l;
+    int loop;
 
-	sep_list *head_s, *list_s;
-	line_list *head_l, *list_l;
-	int loop;
+    head_s = NULL;
+    head_l = NULL;
 
-	head_s = NULL;
-	head_l = NULL;
+    add_nodes(&head_s, &head_l, input);
 
-	add_nodes(&head_s, &head_l, input);
+    list_s = head_s;
+    list_l = head_l;
 
-	list_s = head_s;
-	list_l = head_l;
+    while (list_l != NULL)
+    {
+        datash->input = list_l->line;
+        datash->args = split_line(datash->input);
 
-	while (list_l != NULL)
-	{
-		datash->input = list_l->line;
-		datash->args = split_line(datash->input);
-		loop = exec_line(datash);
-		free(datash->args);
+        // Debugging output
+        printf("Executing: %s\n", datash->input);
+        printf("Arguments: ");
+        for (size_t i = 0; datash->args[i] != NULL; i++)
+        {
+            printf("%s ", datash->args[i]);
+        }
+        printf("\n");
 
-		if (loop == 0)
-			break;
+        loop = exec_line(datash);
+        free(datash->args);
 
-		go_next(&list_s, &list_l, datash);
+        if (loop == 0)
+            break;
 
-		if (list_l != NULL)
-			list_l = list_l->next;
-	}
+        go_next(&list_s, &list_l, datash);
 
-	free_sep_list(&head_s);
-	free_line_list(&head_l);
+        if (list_l != NULL)
+            list_l = list_l->next;
+    }
 
-	if (loop == 0)
-		return (0);
-	return (1);
+    free_sep_list(&head_s);
+    free_line_list(&head_l);
+
+    if (loop == 0)
+        return 0;
+    return 1;
 }
+
 
 /**
  * split_line - tokenizes the input string
