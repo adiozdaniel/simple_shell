@@ -38,7 +38,8 @@ char *get_alias(data_shell *datash, char *alias_name)
 {
     for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
-        if (strcmp(datash->alias_names[i], alias_name) == 0)
+        if (datash->alias_names[i] != NULL && datash->alias_values[i] != NULL &&
+            strcmp(datash->alias_names[i], alias_name) == 0)
         {
             return datash->alias_values[i];
         }
