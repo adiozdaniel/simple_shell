@@ -20,7 +20,7 @@ This **SIMPLE SHELL** program was written entirely in C as a milestone project f
 ```C
 sudo apt-get install valgrind
 gcc -g -o hsh ../ *.c
-valgrind --leak-check=full ./hsh
+valgrind --leak-check=full -v ./hsh
 
 ```
 

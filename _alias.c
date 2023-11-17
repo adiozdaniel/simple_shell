@@ -1,129 +1,143 @@
 #include "main.h"
 
-// Function to add an alias
+/**
+ * add_alias - Adds or updates an alias in the shell data structure
+ * @datash: Pointer to the data_shell structure
+ * @alias_name: Name of the alias
+ * @alias_value: Value of the alias
+ */
 void add_alias(data_shell *datash, char *alias_name, char *alias_value)
 {
-    _print("hi, we are here: with add_alias");
-
-    // Check if the alias already exists
+    /* Check if the alias already exists */
     for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
-        if (strcmp(datash->alias_names[i], alias_name) == 0)
+        if (_alias_strcmp(datash->alias_names[i], alias_name, _strlen(alias_name)) == 0)
         {
-            // Update the existing alias
+            /* Update the existing alias */
             free(datash->alias_values[i]);
-            datash->alias_values[i] = strdup(alias_value);
+            datash->alias_values[i] = _strdup(alias_value);
             return;
         }
     }
 
-    // Add a new alias
+    /* Add a new alias */
     int count = 0;
     while (datash->alias_names[count] != NULL)
     {
         count++;
     }
 
-    datash->alias_names = realloc(datash->alias_names, (count + 2) * sizeof(char *));
-    datash->alias_values = realloc(datash->alias_values, (count + 2) * sizeof(char *));
+    datash->alias_names = _realloc(datash->alias_names, count * sizeof(char *), (count + 2) * sizeof(char *));
+    datash->alias_values = _realloc(datash->alias_values, count * sizeof(char *), (count + 2) * sizeof(char *));
 
-    datash->alias_names[count] = strdup(alias_name);
-    datash->alias_values[count] = strdup(alias_value);
+    datash->alias_names[count] = _strdup(alias_name);
+    datash->alias_values[count] = _strdup(alias_value);
     datash->alias_names[count + 1] = NULL;
     datash->alias_values[count + 1] = NULL;
+
+    if (datash->alias_names[count] == NULL || datash->alias_values[count] == NULL)
+    {
+        /* Handle memory allocation error */
+        _printerr("Error allocating memory");
+        free(datash->alias_names[count]);
+        free(datash->alias_values[count]);
+        datash->alias_names[count] = NULL;
+        datash->alias_values[count] = NULL;
+    }
 }
 
-// Function to get an alias value
+/**
+ * get_alias - Retrieves the value of an alias from the shell data structure
+ * @datash: Pointer to the data_shell structure
+ * @alias_name: Name of the alias to retrieve
+ * Return: Value of the alias, or NULL if not found
+ */
 char *get_alias(data_shell *datash, char *alias_name)
 {
-    _print("got_alias called with alias_name\n");
-
+    /* Search for the alias */
     for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
         if (datash->alias_names[i] != NULL && datash->alias_values[i] != NULL &&
-            strcmp(datash->alias_names[i], alias_name) == 0)
+            _alias_strcmp(datash->alias_names[i], alias_name, _strlen(alias_name)) == 0)
         {
-            _print(datash->alias_values[i]);
             return datash->alias_values[i];
         }
     }
-    _print("Alias not found\n");
     return NULL;
 }
 
-// Function to parse the alias command
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/**
+ * parse_alias_command - Parses an alias command and updates alias_names and alias_values
+ * @input: Input string containing the alias command
+ * @alias_names: Pointer to an array to store alias names
+ * @alias_values: Pointer to an array to store alias values
+ * Return: 0 on success, 1 on memory allocation error
+ */
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values)
 {
-
- _print("parse_alias_command called with input");
-    // Skip "alias " part
-    char *alias_cmd = strdup(input + 6);
+    /* Skip "alias " part */
+    char *alias_cmd = _strdup(input + 6);
     if (alias_cmd == NULL)
     {
-        _printerr("Error allocating memory");
-        return 1; // Memory allocation error
+        perror("Error allocating memory");
+        return 1; /* Memory allocation error */
     }
 
-    char *token = strtok(alias_cmd, " ");
-
-    // Initialize arrays to store names and values
+    /* Initialize arrays to store names and values */
     int count = 0;
-    *alias_names = malloc(sizeof(char *));
-    *alias_values = malloc(sizeof(char *));
-    if (*alias_names == NULL || *alias_values == NULL)
-    {
-        _printerr("Error allocating memory");
-        free(alias_cmd);
-        return 1; // Memory allocation error
-    }
+    *alias_names = NULL;
+    *alias_values = NULL;
+
+    char *token = _strtok(alias_cmd, "=");
 
     while (token != NULL)
     {
-        // Look for equal sign '=' to separate name and value
-        char *equal_sign = strchr(token, '=');
+        /* Allocate memory for name and value */
+        *alias_names = _realloc(*alias_names, count * sizeof(char *), (count + 1) * sizeof(char *));
+        *alias_values = _realloc(*alias_values, count * sizeof(char *), (count + 1) * sizeof(char *));
 
-        if (equal_sign != NULL)
+        if (*alias_names == NULL || *alias_values == NULL)
         {
-            *equal_sign = '\0'; // Null-terminate name
-            (*alias_names)[count] = strdup(token);
-            (*alias_values)[count] = strdup(equal_sign + 1);
-        }
-        else
-        {
-            // Handle the case where there's no equal sign
-            (*alias_names)[count] = strdup(token);
-            (*alias_values)[count] = NULL;
+            perror("Error allocating memory");
+            if (alias_cmd != NULL)
+                free(alias_cmd);
+            return 1; /* Memory allocation error */
         }
 
-        // Check for memory allocation errors
-        if ((*alias_names)[count] == NULL || ((*alias_values)[count] == NULL && equal_sign != NULL))
+        /* Set name */
+        (*alias_names)[count] = _strdup(token);
+
+        /* Set value, or set it to NULL if not present */
+        token = _strtok(NULL, " ");
+        (*alias_values)[count] = (token != NULL) ? _strdup(token) : NULL;
+
+        /* Check for memory allocation errors */
+        if ((*alias_names)[count] == NULL && (*alias_values)[count] == NULL)
         {
-            _printerr("Error allocating memory");
-            free(alias_cmd);
-            // Free memory allocated so far
-            for (int i = 0; i < count; i++)
-            {
-                free((*alias_names)[i]);
-                free((*alias_values)[i]);
-            }
-            free(*alias_names);
-            free(*alias_values);
-            return 1; // Memory allocation error
+            perror("Error allocating memory");
+            if (alias_cmd != NULL)
+                free(alias_cmd);
+
+            return 1; /* Memory allocation error */
         }
 
-        // Resize arrays for the next iteration
+        /* Move to the next token */
         count++;
-        *alias_names = realloc(*alias_names, (count + 1) * sizeof(char *));
-        *alias_values = realloc(*alias_values, (count + 1) * sizeof(char *));
-
-        // Get the next token
-        token = strtok(NULL, " ");
+        token = _strtok(NULL, "=");
     }
 
-    // Null-terminate the arrays
+    /* Null-terminate the arrays */
+    *alias_names = _realloc(*alias_names, count * sizeof(char *), (count + 1) * sizeof(char *));
+    *alias_values = _realloc(*alias_values, count * sizeof(char *), (count + 1) * sizeof(char *));
     (*alias_names)[count] = NULL;
     (*alias_values)[count] = NULL;
 
-    free(alias_cmd);
-    return 0; // Parsing success
+    if (alias_cmd != NULL)
+        free(alias_cmd);
+
+    return 0; /* Parsing success */
 }

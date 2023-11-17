@@ -3,205 +3,133 @@
 ```C
 #include "main.h"
 
-/**
- * no_comment - deletes comments from the input
- * @in: input string
- * Return: input without comments
- */
-char *no_comment(char *in)
+// Function to add an alias
+void add_alias(data_shell *datash, char *alias_name, char *alias_value)
 {
-    int i, up_to;
+    _print("hi, we are here: with add_alias");
 
-    up_to = 0;
-    for (i = 0; in[i]; i++)
+    // Check if the alias already exists
+    for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
-        if (in[i] == '#')
+        if (strcmp(datash->alias_names[i], alias_name) == 0)
         {
-            if (i == 0)
-            {
-                free(in);
-                return (NULL);
-            }
-
-            if (in[i - 1] == ' ' || in[i - 1] == '\t' || in[i - 1] == ';')
-                up_to = i;
+            // Update the existing alias
+            free(datash->alias_values[i]);
+            datash->alias_values[i] = strdup(alias_value);
+            return;
         }
     }
 
-    if (up_to != 0)
+    // Add a new alias
+    int count = 0;
+    while (datash->alias_names[count] != NULL)
     {
-        in = _realloc(in, i, up_to + 1);
-        in[up_to] = '\0';
+        count++;
     }
 
-    return (in);
+    datash->alias_names = realloc(datash->alias_names, (count + 2) * sizeof(char *));
+    datash->alias_values = realloc(datash->alias_values, (count + 2) * sizeof(char *));
+
+    datash->alias_names[count] = strdup(alias_name);
+    datash->alias_values[count] = strdup(alias_value);
+    datash->alias_names[count + 1] = NULL;
+    datash->alias_values[count + 1] = NULL;
 }
 
-
-/**
- * shell - Loop of shell
- * @datash: data relevant (av, input, args)
- *
- * Return: no return.
- */
-void shell(data_shell *datash)
+// Function to get an alias value
+char *get_alias(data_shell *datash, char *alias_name)
 {
-    int loop = 1;
-    int i_eof;
-    char *input;
-    char *prompt = "Happy&Adioz-Shell: ";
+    _print("got_alias called with alias_name\n");
 
-    while (loop == 1)
+    for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
-        write(STDIN_FILENO, prompt, _strlen(prompt));
-        input = read_line(&i_eof);
-
-        if (i_eof != -1)
+        if (datash->alias_names[i] != NULL && datash->alias_values[i] != NULL &&
+            strcmp(datash->alias_names[i], alias_name) == 0)
         {
-            char *clean_input = no_comment(input);
-            if (clean_input == NULL)
-            {
-                free(input);
-                continue;
-            }
+            _print(datash->alias_values[i]);
+            return datash->alias_values[i];
+        }
+    }
+    _print("Alias not found\n");
+    return NULL;
+}
 
-            if (check_syntax_error(datash, clean_input) == 1)
-            {
-                datash->status = 2;
-                free(clean_input);
-                free(input);
-                continue;
-            }
+// Function to parse the alias command
+int parse_alias_command(const char *input, char ***alias_names, char ***alias_values)
+{
 
-            // Check if the word "alias" is present in the input
-            // if (strncmp(clean_input, "alias", 5) == 0)
-            // {
-            //     // If the user types "alias" without arguments, display all aliases
-            //     // if (strlen(clean_input) <= 6 || strlen(clean_input) <= 6 && clean_input[5] == ' ')
-            //     if (strlen(clean_input) <= 6 || clean_input[5] == ' ')
-            //     {
-            //         _print("Display all aliases:\n");
-            //         for (int i = 0; datash->alias_names[i] != NULL; i++)
-            //         {
-            //             _print("%s='%s'\n", datash->alias_names[i], datash->alias_values[i]);
-            //         }
-            //         free(clean_input);
-            //         continue;
-            //     }
+ _print("parse_alias_command called with input");
+    // Skip "alias " part
+    char *alias_cmd = strdup(input + 6);
+    if (alias_cmd == NULL)
+    {
+        _printerr("Error allocating memory");
+        return 1; // Memory allocation error
+    }
 
-            //     // If we have "alias" with arguments in the command line
-            //     // if (strlen(clean_input) > 6 && clean_input[5] == ' ')
-            //     if (strlen(clean_input) >= 7 && clean_input[6] != ' ' && clean_input[5] == ' ')
-            //     // if (strncmp(clean_input, "alias ", 6) == 0 && strlen(clean_input) > 6)
-            //     {
-            //         char **alias_names = NULL, **alias_values = NULL;
-            //         char *alias_value = get_alias(datash, clean_input);
+    char *token = strtok(alias_cmd, " ");
 
-            //         if (alias_value != NULL)
-            //         {
-            //             // If the command is an alias, replace it with the alias value
-            //             free(clean_input);
-            //             input = strdup(alias_value);
-            //             continue;
-            //         }
+    // Initialize arrays to store names and values
+    int count = 0;
+    *alias_names = malloc(sizeof(char *));
+    *alias_values = malloc(sizeof(char *));
+    if (*alias_names == NULL || *alias_values == NULL)
+    {
+        _printerr("Error allocating memory");
+        free(alias_cmd);
+        return 1; // Memory allocation error
+    }
 
-            //         // Parse alias command to get alias_names and alias_values
-            //         if (parse_alias_command(clean_input, &alias_names, &alias_values) == 0)
-            //         {
-            //             // Print values for debugging
-            //             _print("Parsed alias: name='%s', value='%s'\n", alias_names[0], alias_values[0]);
+    while (token != NULL)
+    {
+        // Look for equal sign '=' to separate name and value
+        char *equal_sign = strchr(token, '=');
 
-            //             // Add the alias to your data structure
-            //             if (alias_names[0] != NULL)
-            //             {
-            //                 add_alias(datash, alias_names[0], (alias_values[0] != NULL) ? alias_values[0] : "");
-            //                 _print("Alias added: %s='%s'\n", alias_names[0], (alias_values[0] != NULL) ? alias_values[0] : "");
-            //             }
-
-            //             // Free memory
-            //             free(alias_names[0]);
-            //             free(alias_values[0]);
-            //             free(alias_names);
-            //             free(alias_values);
-            //         }
-            //         else
-            //         {
-            //             // Handle parsing error
-            //             _print("There was an error parsing the alias command: %s\n", clean_input);
-            //         }
-
-            //         free(clean_input); // Free the cleaned input
-            //         continue;
-            //     }
-            // }
-
-            if (strncmp(clean_input, "alias", 5) == 0)
-            {
-                // Check if the word "alias" is present in the input
-                if (is_alias_with_arguments(clean_input))
-                {
-                    char **aliases = check_alias(clean_input);
-                
-                    // If we have "alias" with arguments in the command line
-                    printf("this is a real alias with arguments:\n");
-                
-                    // Print each argument
-                    for (int i = 0; aliases[i] != NULL; i++)
-                    {
-                        printf("%s\n", aliases[i]);
-                        // Free the memory allocated for each argument
-                        free(aliases[i]);
-                    }
-                
-                    // Free the memory allocated for the array of arguments
-                    free(aliases);
-                
-                    free(clean_input);
-                    continue;
-                }
-
-                else
-                {
-                    if (check_syntax_error(datash, clean_input) == 1)
-                    {
-                        datash->status = 2;
-                        free(clean_input);
-                        continue;
-                    }
-                    else
-                    {
-                        input = rep_var(clean_input, datash);
-
-                        loop = split_commands(datash, input);
-                        datash->counter += 1;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                if (check_syntax_error(datash, clean_input) == 1)
-                {
-                    datash->status = 2;
-                    free(clean_input);
-                    continue;
-                }
-                else
-                {
-                    input = rep_var(clean_input, datash);
-
-                    loop = split_commands(datash, input);
-                    datash->counter += 1;
-                }
-            }
-            free(clean_input); // Free the cleaned input
+        if (equal_sign != NULL)
+        {
+            *equal_sign = '\0'; // Null-terminate name
+            (*alias_names)[count] = strdup(token);
+            (*alias_values)[count] = strdup(equal_sign + 1);
         }
         else
         {
-            loop = 0;
-            free(input);
+            // Handle the case where there's no equal sign
+            (*alias_names)[count] = strdup(token);
+            (*alias_values)[count] = NULL;
         }
+
+        // Check for memory allocation errors
+        if ((*alias_names)[count] == NULL || ((*alias_values)[count] == NULL && equal_sign != NULL))
+        {
+            _printerr("Error allocating memory");
+            free(alias_cmd);
+            // Free memory allocated so far
+            for (int i = 0; i < count; i++)
+            {
+                free((*alias_names)[i]);
+                free((*alias_values)[i]);
+            }
+            free(*alias_names);
+            free(*alias_values);
+            return 1; // Memory allocation error
+        }
+
+        // Resize arrays for the next iteration
+        count++;
+        *alias_names = realloc(*alias_names, (count + 1) * sizeof(char *));
+        *alias_values = realloc(*alias_values, (count + 1) * sizeof(char *));
+
+        // Get the next token
+        token = strtok(NULL, " ");
     }
+
+    // Null-terminate the arrays
+    (*alias_names)[count] = NULL;
+    (*alias_values)[count] = NULL;
+
+    free(alias_cmd);
+    return 0; // Parsing success
 }
+
 
 ```
