@@ -12,6 +12,8 @@
 #include <signal.h>
 #include <limits.h>
 #include <string.h>
+#include <ctype.h>
+// #include <stdbool.h>
 
 #define BUFSIZE 1024
 #define TOK_BUFSIZE 128
@@ -99,6 +101,18 @@ int (*get_builtin(char *cmd))(data_shell *datash);
 void add_alias(data_shell *datash, char *alias_name, char *alias_value);
 char *get_alias(data_shell *datash, char *alias_name);
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values);
+
+/* _alias_utilities*/
+int check_alias_syntax(char *input);
+int _isspace(char c);
+char *trim_whitespace(char *str);
+int _alias_strcmp(const char *s1, const char *s2, size_t n);
+
+/* _memory.c */
+void _memcpy(void *newptr, const void *ptr, unsigned int size);
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+char **_reallocdp(char **ptr, unsigned int old_size, unsigned int new_size);
+// void _free2DArray(char **array, int size);
 
 /* syntax_checker */
 int repeated_char(char *input, int i);
@@ -188,11 +202,6 @@ char *read_line(int *i_eof);
 void bring_line(char **lineptr, size_t *n, char *buffer, size_t j);
 ssize_t get_line(char **lineptr, size_t *n, FILE *stream);
 int exec_line(data_shell *datash);
-
-/* _memory.c */
-void _memcpy(void *newptr, const void *ptr, unsigned int size);
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
-char **_reallocdp(char **ptr, unsigned int old_size, unsigned int new_size);
 
 /* _lists.c, _lists2.c */
 sep_list *add_sep_node_end(sep_list **head, char sep);

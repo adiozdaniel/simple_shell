@@ -3,7 +3,7 @@
 // Function to add an alias
 void add_alias(data_shell *datash, char *alias_name, char *alias_value)
 {
-    printf("hi, we are here: %s\n", alias_name);
+    _print("hi, we are here: with add_alias");
 
     // Check if the alias already exists
     for (int i = 0; datash->alias_names[i] != NULL; i++)
@@ -34,41 +34,33 @@ void add_alias(data_shell *datash, char *alias_name, char *alias_value)
 }
 
 // Function to get an alias value
-// Function to get an alias value
 char *get_alias(data_shell *datash, char *alias_name)
 {
-    printf("%s: ", alias_name);
+    _print("got_alias called with alias_name\n");
 
-    // Check if datash is NULL
-    if (datash == NULL || datash->alias_names == NULL || alias_name == NULL)
-    {
-        // Add appropriate error handling or return value if necessary
-        return NULL;
-    }
-
-    // Iterate over alias_names array
     for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
-        // Check if alias_names[i] and alias_values[i] are not NULL
         if (datash->alias_names[i] != NULL && datash->alias_values[i] != NULL &&
             strcmp(datash->alias_names[i], alias_name) == 0)
         {
+            _print(datash->alias_values[i]);
             return datash->alias_values[i];
         }
     }
-
+    _print("Alias not found\n");
     return NULL;
 }
-
 
 // Function to parse the alias command
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values)
 {
+
+ _print("parse_alias_command called with input");
     // Skip "alias " part
     char *alias_cmd = strdup(input + 6);
     if (alias_cmd == NULL)
     {
-        perror("Error allocating memory");
+        _printerr("Error allocating memory");
         return 1; // Memory allocation error
     }
 
@@ -80,7 +72,7 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
     *alias_values = malloc(sizeof(char *));
     if (*alias_names == NULL || *alias_values == NULL)
     {
-        perror("Error allocating memory");
+        _printerr("Error allocating memory");
         free(alias_cmd);
         return 1; // Memory allocation error
     }
@@ -106,7 +98,7 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
         // Check for memory allocation errors
         if ((*alias_names)[count] == NULL || ((*alias_values)[count] == NULL && equal_sign != NULL))
         {
-            perror("Error allocating memory");
+            _printerr("Error allocating memory");
             free(alias_cmd);
             // Free memory allocated so far
             for (int i = 0; i < count; i++)

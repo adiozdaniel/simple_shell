@@ -81,3 +81,21 @@ char **_reallocdp(char **ptr, unsigned int old_size, unsigned int new_size)
 
 	return (newptr);
 }
+
+/*
+ * _free2DArray - Free memory allocated for a 2D array.
+ *
+ * @array: Pointer to the 2D array.
+ * @size: Size of the array.
+ */
+// void _free2DArray(char **array, int size)
+// {
+//     /* Iterate through each row of the array*/
+//     for (int i = 0; i < size; i++) {
+//         // Free memory for each row
+//         free(array[i]);
+//     }
+
+//     /* Free memory for the array itself*/
+//     free(array);
+// }

@@ -123,8 +123,7 @@ void go_next(sep_list **list_s, line_list **list_l, data_shell *datash)
 
 /**
  * split_commands - splits command lines according to
- * the separators ;, | and &, and executes them
- *
+ * the separators ;, | and & and executes them
  * @datash: data structure
  * @input: input string
  * Return: 0 to exit, 1 to continue
@@ -149,13 +148,13 @@ int split_commands(data_shell *datash, char *input)
         datash->args = split_line(datash->input);
 
         // Debugging output
-        printf("Executing: %s\n", datash->input);
-        printf("Arguments: ");
+        // _print("Executing: %s\n", datash->input);
+        // _print("Arguments: ");
         for (size_t i = 0; datash->args[i] != NULL; i++)
         {
-            printf("%s ", datash->args[i]);
+            // _print("%s ", datash->args[i]);
         }
-        printf("\n");
+        // _print("\n");
 
         loop = exec_line(datash);
         free(datash->args);
@@ -177,10 +176,8 @@ int split_commands(data_shell *datash, char *input)
     return 1;
 }
 
-
 /**
  * split_line - tokenizes the input string
- *
  * @input: input string.
  * Return: string splitted.
  */
