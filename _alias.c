@@ -79,11 +79,9 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
 {
     /* Skip "alias " part */
     char *alias_cmd = _strdup(input + 6);
+
     if (alias_cmd == NULL)
-    {
-        perror("Error allocating memory");
         return 1; /* Memory allocation error */
-    }
 
     /* Initialize arrays to store names and values */
     int count = 0;
@@ -100,10 +98,7 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
 
         if (*alias_names == NULL || *alias_values == NULL)
         {
-            perror("Error allocating memory");
-            if (alias_cmd != NULL)
-                free(alias_cmd);
-
+            free(alias_cmd);
             return 1; /* Memory allocation error */
         }
 
@@ -117,7 +112,7 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
         /* Check for memory allocation errors */
         if ((*alias_names)[count] == NULL && (*alias_values)[count] == NULL)
         {
-            perror("Error allocating memory");
+
             if (alias_cmd != NULL)
                 free(alias_cmd);
 
@@ -137,10 +132,6 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
 
     if (*alias_names == NULL || *alias_values == NULL)
     {
-        perror("Error allocating memory");
-        if (alias_cmd != NULL)
-            free(alias_cmd);
-
         /* Free allocated memory for names and values */
         for (int i = 0; i < count; i++)
         {
@@ -149,6 +140,7 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
         }
         free(*alias_names);
         free(*alias_values);
+        free(alias_cmd);
 
         return 1; /* Memory allocation error */
     }

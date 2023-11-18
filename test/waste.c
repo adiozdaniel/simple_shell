@@ -64,18 +64,7 @@ void shell(data_shell *datash)
                                 printf("added alias %d\n", (*alias_names[i]));
                         }
 
-                        // Free memory for alias_names and alias_values
-                        // for (int i = 0; alias_names[i] != NULL; i++)
-                        // {
-                        //     free(alias_names[i]);
-                        //     free(alias_values[i]);
-                        // }
-                        // if (alias_names != NULL)
-                        // free(alias_names);
-                        // if (alias_values != NULL)
-                        // free(alias_values);
 
-                        // continue;
                     }
                     //  free(clean_input);  // Free clean_input in both success and error cases
                     continue;

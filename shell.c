@@ -68,55 +68,61 @@ void shell(data_shell *datash)
                     {
                         /* Process and use the aliases */
                         for (int i = 0; alias_names[i] != NULL; i++)
-                        {
                             add_alias(datash, alias_names[i], alias_values[i]);
-                                printf("added alias %d\n", (*alias_names[i]));
-                        }
+
                     }
                     else
                     {
-                        printf("Alas! %s\n", clean_input);
-                        free(clean_input);
+                        printf("Alas! %s", clean_input);
+
                     }
                 }
-                /* Free memory for alias_names and alias_values*/
-                if (alias_names != NULL || alias_values != NULL)
+
+                /* Free memory for alias_names and alias_values */
+                for (int i = 0; alias_names[i] != NULL; i++)
                 {
-                    for (int i = 0; alias_names[i] != NULL; i++)
-                    {
-                        if (alias_names[i] != NULL)
-                            free(alias_names[i]);
-                        if (alias_values[i] != NULL)
-                            free(alias_values[i]);
-                    }
-                    free(alias_names);
-                    free(alias_values);
-                    continue;
+                    free(alias_names[i]);  // Free individual alias name
+
+                    if (alias_values[i] != NULL)
+                        free(alias_values[i]); // Free individual alias value
                 }
-                    continue;
+
+                if (alias_names != NULL)
+                    free(alias_names); // Free the array of alias names
+
+                if (alias_values != NULL)
+                    free(alias_values); // Free the array of alias values
+
+                if (clean_input == NULL)
+                    free(clean_input);
             }
             else
             {
                 if (check_syntax_error(datash, clean_input) == 1)
                 {
                     datash->status = 2;
-                    // free(clean_input);
-                    continue;
+
+                    if (clean_input != NULL)
+                        free(clean_input);
+                    continue;  // Continue to the next iteration of the loop
                 }
                 else
                 {
                     input = rep_var(clean_input, datash);
-
                     loop = split_commands(datash, input);
                     datash->counter += 1;
                 }
-                free(clean_input);
             }
+            if (clean_input != NULL)
+                free(clean_input);  // Free clean_input outside of the conditional blocks
+
         }
         else
         {
             loop = 0;
-            free(input);
+            if (input != NULL)
+                free(input);
         }
+
     }
 }

@@ -6,22 +6,33 @@
  */
 void free_data(data_shell *datash)
 {
-	unsigned int i;
+    unsigned int i;
 
-	for (i = 0; datash->_environ[i]; i++)
-		free(datash->_environ[i]);
+    // Free environment variables
+    if (datash->_environ != NULL)
+    {
+        for (i = 0; datash->_environ[i] != NULL; i++)
+            free(datash->_environ[i]);
 
-	free(datash->_environ);
-	free(datash->pid);
-
-	    // Free alias-related memory
-    for (i = 0; datash->alias_names[i] != NULL; i++) {
-        free(datash->alias_names[i]);
-        free(datash->alias_values[i]);
+        free(datash->_environ);
     }
 
-    free(datash->alias_names);
-    free(datash->alias_values);
+    // Free process ID string
+    if (datash->pid != NULL)
+        free(datash->pid);
+
+    // Free alias-related memory
+    if (datash->alias_names != NULL)
+    {
+        for (i = 0; datash->alias_names[i] != NULL; i++)
+        {
+            free(datash->alias_names[i]);
+            free(datash->alias_values[i]);
+        }
+
+        free(datash->alias_names);
+        free(datash->alias_values);
+    }
 }
 
 /**
@@ -31,30 +42,32 @@ void free_data(data_shell *datash)
  */
 void set_data(data_shell *datash, char **av)
 {
-	unsigned int i;
+    unsigned int i;
 
-	datash->av = av;
-	datash->input = NULL;
-	datash->args = NULL;
-	datash->status = 0;
-	datash->counter = 1;
+    datash->av = av;
+    datash->input = NULL;
+    datash->args = NULL;
+    datash->status = 0;
+    datash->counter = 1;
 
-	for (i = 0; environ[i]; i++)
-		;
+    for (i = 0; environ[i]; i++)
+        ;
 
-	datash->_environ = malloc(sizeof(char *) * (i + 1));
+    datash->_environ = malloc(sizeof(char *) * (i + 1));
 
-	for (i = 0; environ[i]; i++)
-		datash->_environ[i] = _strdup(environ[i]);
+    for (i = 0; environ[i]; i++)
+        datash->_environ[i] = _strdup(environ[i]);
 
-	datash->_environ[i] = NULL;
-	datash->pid = get_itoa(getpid());
+    datash->_environ[i] = NULL;
+    datash->pid = get_itoa(getpid());
 
-	/* initialise alias table */
-    datash->alias_names = malloc(sizeof(char *) * 1);  // Allocate space for one pointer
-    datash->alias_values = malloc(sizeof(char *) * 1); // Allocate space for one pointer
+    /* initialise alias table */
+    datash->alias_names = malloc(sizeof(char *) * 2);  // Allocate space for two pointers
+    datash->alias_values = malloc(sizeof(char *) * 2); // Allocate space for two pointers
     datash->alias_names[0] = NULL;
     datash->alias_values[0] = NULL;
+    datash->alias_names[1] = NULL; // Ensure the array ends with a NULL pointer
+    datash->alias_values[1] = NULL; // Ensure the array ends with a NULL pointer
 }
 
 /**
