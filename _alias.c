@@ -66,9 +66,6 @@ char *get_alias(data_shell *datash, char *alias_name)
     return NULL;
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 /**
  * parse_alias_command - Parses an alias command and updates alias_names and alias_values
@@ -76,7 +73,8 @@ char *get_alias(data_shell *datash, char *alias_name)
  * @alias_names: Pointer to an array to store alias names
  * @alias_values: Pointer to an array to store alias values
  * Return: 0 on success, 1 on memory allocation error
- */
+*/
+
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values)
 {
     /* Skip "alias " part */
@@ -105,6 +103,7 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
             perror("Error allocating memory");
             if (alias_cmd != NULL)
                 free(alias_cmd);
+
             return 1; /* Memory allocation error */
         }
 
@@ -126,16 +125,38 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
         }
 
         /* Move to the next token */
-        count++;
+        if (token != NULL)
+            count++;
+
         token = _strtok(NULL, "=");
     }
 
     /* Null-terminate the arrays */
     *alias_names = _realloc(*alias_names, count * sizeof(char *), (count + 1) * sizeof(char *));
     *alias_values = _realloc(*alias_values, count * sizeof(char *), (count + 1) * sizeof(char *));
+
+    if (*alias_names == NULL || *alias_values == NULL)
+    {
+        perror("Error allocating memory");
+        if (alias_cmd != NULL)
+            free(alias_cmd);
+
+        /* Free allocated memory for names and values */
+        for (int i = 0; i < count; i++)
+        {
+            free((*alias_names)[i]);
+            free((*alias_values)[i]);
+        }
+        free(*alias_names);
+        free(*alias_values);
+
+        return 1; /* Memory allocation error */
+    }
+
     (*alias_names)[count] = NULL;
     (*alias_values)[count] = NULL;
 
+    /* Free temporary memory */
     if (alias_cmd != NULL)
         free(alias_cmd);
 

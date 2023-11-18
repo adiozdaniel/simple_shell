@@ -57,63 +57,44 @@ void shell(data_shell *datash)
         {
             char *clean_input = no_comment(input);
             if (clean_input == NULL)
-            {
-                free(input);
-                continue;
-            }
+                break; /* free(input);*/
 
             if (strncmp(clean_input, "alias", 5) == 0)
             {
-                if (check_alias_syntax(clean_input))
+                char **alias_names = NULL, **alias_values = NULL;
+                if (parse_alias_command(clean_input, &alias_names, &alias_values) == 0)
                 {
-                    _print("the alias is fine\n");
-
-                    char **alias_names = NULL, **alias_values = NULL;
-
-                    if (parse_alias_command(clean_input, &alias_names, &alias_values) == 0)
+                    if (check_alias_syntax(clean_input))
                     {
-                        /* process and use the aliases */
-                    
-                        // Free memory for alias_names and alias_values
+                        /* Process and use the aliases */
                         for (int i = 0; alias_names[i] != NULL; i++)
                         {
-                            free(alias_names[i]);
-                            free(alias_values[i]);
+                            add_alias(datash, alias_names[i], alias_values[i]);
+                                printf("added alias %d\n", (*alias_names[i]));
                         }
-                        free(alias_names);
-                        free(alias_values);
-                    
-                        // continue;
                     }
-                     free(clean_input);  // Free clean_input in both success and error cases
-                    continue;
-
-                }
-                else
-                {
-                    // Print all stored aliases
-                    printf("Stored aliases:\n");
-                
-                    for (int i = 0; datash->alias_names[i] != NULL; i++)
+                    else
                     {
-                        char *alias_name = datash->alias_names[i];
-                        char *alias_value = get_alias(datash, alias_name);
-                
-                        if (alias_value != NULL)
-                        {
-                            printf("%s='%s'\n", alias_name, alias_value);
-                            free(alias_value);
-                        }
-                        else
-                        {
-                            printf("%s=NULL\n", alias_name);
-                        }
+                        printf("Alas! %s\n", clean_input);
+                        free(clean_input);
                     }
                 }
-
-                free(clean_input);
+                /* Free memory for alias_names and alias_values*/
+                if (alias_names != NULL || alias_values != NULL)
+                {
+                    for (int i = 0; alias_names[i] != NULL; i++)
+                    {
+                        if (alias_names[i] != NULL)
+                            free(alias_names[i]);
+                        if (alias_values[i] != NULL)
+                            free(alias_values[i]);
+                    }
+                    free(alias_names);
+                    free(alias_values);
+                    continue;
+                }
+                    continue;
             }
-
             else
             {
                 if (check_syntax_error(datash, clean_input) == 1)

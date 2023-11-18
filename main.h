@@ -101,6 +101,7 @@ int (*get_builtin(char *cmd))(data_shell *datash);
 void add_alias(data_shell *datash, char *alias_name, char *alias_value);
 char *get_alias(data_shell *datash, char *alias_name);
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values);
+void execute_alias(data_shell *datash, char *alias_name);
 
 /* _alias_utilities*/
 int check_alias_syntax(char *input);
@@ -112,7 +113,7 @@ int _alias_strcmp(const char *s1, const char *s2, size_t n);
 void _memcpy(void *newptr, const void *ptr, unsigned int size);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char **_reallocdp(char **ptr, unsigned int old_size, unsigned int new_size);
-// void _free2DArray(char **array, int size);
+// void *_alias_realloc(void *ptr, size_t old_size, size_t new_size);
 
 /* syntax_checker */
 int repeated_char(char *input, int i);
