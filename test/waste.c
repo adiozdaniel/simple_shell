@@ -73,35 +73,35 @@ void shell(data_shell *datash)
                 else
                 {
                     int i;
-                    for (i = 0; datash->alias_names[i] != NULL; i++)
-                    {
-                        char *alias_name = datash->alias_names[i];
-                        char *alias_value = get_alias(datash, alias_name);
-                        char output[1024];  /* Adjust the buffer size as needed */
-                    
-                        if (alias_value != NULL)
+                        for (i = 0; datash->alias_names[i] != NULL; i++)
                         {
-                            int j;
-                            for (j = 0; alias_name[j] != '\0'; j++)
-                                output[j] = alias_name[j];
-                            output[j++] = '=';
-                            for (int k = 0; alias_value[k] != '\0'; k++, j++)
-                                output[j] = alias_value[k];
-                            output[j++] = '\n';
-                    
-                            for (int k = 0; output[k] != '\0'; k++)
-                                write(STDIN_FILENO, &output[k], 1);
+                            char *alias_name = datash->alias_names[i];
+                            char *alias_value = get_alias(datash, alias_name);
+                            char output[BUFSIZE];
+
+                            if (alias_value != NULL)
+                            {
+                                int j;
+                                for (j = 0; alias_name[j] != '\0'; j++)
+                                    output[j] = alias_name[j];
+                                output[j++] = '=';
+                                for (int k = 0; alias_value[k] != '\0'; k++, j++)
+                                    output[j] = alias_value[k];
+                                output[j++] = '\n';
+
+                                for (int k = 0; output[k] != '\0'; k++)
+                                    write(STDIN_FILENO, &output[k], 1);
+                            }
+                            else
+                            {
+                                for (int k = 0; alias_name[k] != '\0'; k++)
+                                    write(STDIN_FILENO, &alias_name[k], 1);
+                                char null_msg[] = "=NULL\n";
+                                for (int k = 0; null_msg[k] != '\0'; k++)
+                                    write(STDIN_FILENO, &null_msg[k], 1);
+                            }
                         }
-                        else
-                        {
-                            for (int k = 0; alias_name[k] != '\0'; k++)
-                                write(STDIN_FILENO, &alias_name[k], 1);
-                            char null_msg[] = "=NULL\n";
-                            for (int k = 0; null_msg[k] != '\0'; k++)
-                                write(STDIN_FILENO, &null_msg[k], 1);
-                        }
-                        free(alias_value);
-                    }
+                }
 
 
                 }

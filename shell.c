@@ -43,7 +43,7 @@ char *no_comment(char *in)
  */
 void shell(data_shell *datash)
 {
-    int loop = 1;
+    int loop = 1, i;
     int i_eof;
     char *input;
     char *prompt = "Happy&Adioz-Shell: ";
@@ -69,42 +69,49 @@ void shell(data_shell *datash)
                         /* Process and use the aliases */
                         for (int i = 0; alias_names[i] != NULL; i++)
                             add_alias(datash, alias_names[i], alias_values[i]);
-
                     }
                     else
                     {
-                        printf("Alas! %s", clean_input);
+                        for (i = 0; datash->alias_names[i] != NULL; i++)
+                        {
+                            char *alias_name = datash->alias_names[i];
+                            char *alias_value = datash->alias_values[i];
 
+                            /* system(alias_value); */
+                            _print(alias_name);
+                            _print(":");
+                            _print(alias_value);
+                        }
                     }
                 }
-
-                /* Free memory for alias_names and alias_values */
-                for (int i = 0; alias_names[i] != NULL; i++)
-                {
-                    free(alias_names[i]);  // Free individual alias name
-
-                    if (alias_values[i] != NULL)
-                        free(alias_values[i]); // Free individual alias value
-                }
-
-                if (alias_names != NULL)
-                    free(alias_names); // Free the array of alias names
-
-                if (alias_values != NULL)
-                    free(alias_values); // Free the array of alias values
-
-                if (clean_input == NULL)
-                    free(clean_input);
             }
             else
             {
+                /* Check if the entered command is an alias */
+                for (int i = 0; datash->alias_names[i] != NULL; i++)
+                {
+                    int results = _alias_strcmp(datash->alias_names[i], clean_input, _strlen(clean_input));
+                    int results2 = strncmp(datash->alias_names[i], clean_input, strlen(clean_input));
+                    printf("checking...%s against %s and got: %d\n", datash->alias_names[i], clean_input, results);
+                    printf("Real results: %d\n", results2);
+
+                    if (strncmp(datash->alias_names[i], clean_input, strlen(clean_input)) == -10)
+                    {
+                        char *alias_value = alias_cmd(datash->alias_values[i]);
+                        // Execute the corresponding alias command
+                        _print("Hooooraaaay, it works!\n");
+                        // Use alias_value as needed
+                        free(alias_value);
+                        // break;
+                    }
+                }
+
                 if (check_syntax_error(datash, clean_input) == 1)
                 {
                     datash->status = 2;
 
                     if (clean_input != NULL)
                         free(clean_input);
-                    continue;  // Continue to the next iteration of the loop
                 }
                 else
                 {
@@ -115,14 +122,22 @@ void shell(data_shell *datash)
             }
             if (clean_input != NULL)
                 free(clean_input);  // Free clean_input outside of the conditional blocks
-
         }
         else
         {
             loop = 0;
+
+            for (i = 0; datash->alias_names[i] != NULL; i++)
+            {
+                if (datash->alias_names[i] != NULL)
+                    free(datash->alias_names[i]);
+
+                if (datash->alias_values[i] != NULL)
+                    free(datash->alias_values[i]);
+            }
+
             if (input != NULL)
                 free(input);
         }
-
     }
 }

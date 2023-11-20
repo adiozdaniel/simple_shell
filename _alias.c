@@ -15,7 +15,7 @@ void add_alias(data_shell *datash, char *alias_name, char *alias_value)
         {
             /* Update the existing alias */
             free(datash->alias_values[i]);
-            datash->alias_values[i] = _strdup(alias_value);
+            datash->alias_values[i] = (alias_value != NULL) ? _strdup(alias_value) : NULL;
             return;
         }
     }
@@ -31,7 +31,7 @@ void add_alias(data_shell *datash, char *alias_name, char *alias_value)
     datash->alias_values = _realloc(datash->alias_values, count * sizeof(char *), (count + 2) * sizeof(char *));
 
     datash->alias_names[count] = _strdup(alias_name);
-    datash->alias_values[count] = _strdup(alias_value);
+    datash->alias_values[count] = (alias_value != NULL) ? _strdup(alias_value) : NULL;
     datash->alias_names[count + 1] = NULL;
     datash->alias_values[count + 1] = NULL;
 
@@ -46,26 +46,34 @@ void add_alias(data_shell *datash, char *alias_name, char *alias_value)
     }
 }
 
+
 /**
  * get_alias - Retrieves the value of an alias from the shell data structure
  * @datash: Pointer to the data_shell structure
  * @alias_name: Name of the alias to retrieve
  * Return: Value of the alias, or NULL if not found
  */
+
 char *get_alias(data_shell *datash, char *alias_name)
 {
+    if (datash == NULL || alias_name == NULL) {
+        // Handle NULL pointers
+        return NULL;
+    }
+
     /* Search for the alias */
     for (int i = 0; datash->alias_names[i] != NULL; i++)
     {
-        if (datash->alias_names[i] != NULL && datash->alias_values[i] != NULL &&
+        if (datash->alias_names[i] != NULL &&
+            datash->alias_values[i] != NULL &&
             _alias_strcmp(datash->alias_names[i], alias_name, _strlen(alias_name)) == 0)
         {
             return datash->alias_values[i];
         }
     }
-    return NULL;
-}
 
+    return NULL; // Alias not found
+}
 
 /**
  * parse_alias_command - Parses an alias command and updates alias_names and alias_values
@@ -153,4 +161,40 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
         free(alias_cmd);
 
     return 0; /* Parsing success */
+}
+
+/**
+ * alias_cmd - Clean alias command
+ * @input: Input string to check
+ * Return: Modified string with quotes removed
+ */
+char *alias_cmd(const char *str)
+{
+    int len = _strlen(str);
+
+    // Allocate memory for the cleaned string (including space for the null terminator)
+    char *clean_str = _strdup(str);
+    if (clean_str == NULL)
+    {
+        // Handle memory allocation failure
+        return NULL;
+    }
+
+    char *current = clean_str;
+    const char *tail = str;
+
+    while (*tail)
+    {
+        if (tail[0] == '\'' || tail[len - 1] == '\'' || tail[0] == '\"' || tail[len - 1] == '\"')
+        {
+            tail++;
+        }
+        else
+        {
+            *current++ = *tail++;
+        }
+    }
+
+    *current = '\0';
+    return clean_str;
 }

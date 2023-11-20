@@ -13,6 +13,7 @@
 #include <limits.h>
 #include <string.h>
 #include <ctype.h>
+
 // #include <stdbool.h>
 
 #define BUFSIZE 1024
@@ -101,7 +102,8 @@ int (*get_builtin(char *cmd))(data_shell *datash);
 void add_alias(data_shell *datash, char *alias_name, char *alias_value);
 char *get_alias(data_shell *datash, char *alias_name);
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values);
-void execute_alias(data_shell *datash, char *alias_name);
+int use_alias(data_shell *datash, char *alias_name);
+char *alias_cmd(const char *str);
 
 /* _alias_utilities*/
 int check_alias_syntax(char *input);
