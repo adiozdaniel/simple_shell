@@ -19,6 +19,10 @@
 #define BUFSIZE 1024
 #define TOK_BUFSIZE 128
 #define TOK_DELIM " \t\r\n\a"
+/* shell utility constants */
+#define CMD_ALIAS 1
+#define CMD_ALIAS_EXEC 2
+#define CMD_UNKNOWN 3
 
 /**
  * struct data - the struct
@@ -107,9 +111,9 @@ char *alias_cmd(const char *str);
 int check_alias(data_shell *datash, char *input);
 
 /* _alias_utilities*/
-int check_alias_syntax(char *input);
+int check_alias_syntax(const char *input);
 int _isspace(char c);
-char *trim_whitespace(char *str);
+char *trim_whitespace(const char *str);
 int _alias_strcmp(const char *s1, const char *s2, size_t n);
 
 /* _memory.c */
@@ -170,8 +174,15 @@ char *get_itoa(int n);
 int _itoa(char *s);
 
 /* shell */
-char *no_comment(char *in);
 void shell(data_shell *datash);
+
+/* shell_utilities */
+char *no_comment(char *in);
+// char *no_comment(const char *in);
+int get_command_type(data_shell *datash, const char *input);
+void handle_alias_command(data_shell *datash, const char *clean_input);
+int is_alias_exec_command(data_shell *datash, const char *clean_input);
+void free_string_array(char **arr);
 
 /* _help0.c, _help.c, _help2.c */
 void _help(void);

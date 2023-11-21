@@ -15,35 +15,44 @@ int _isspace(char c)
  * @str: Input string
  * Return: Pointer to the trimmed string
 */
-char *trim_whitespace(char *str)
-{
-    char *end;
 
-    /* Trim leading whitespace*/
-    while (_isspace(*str))
+/* Implementation in the corresponding source file */
+char *trim_whitespace(const char *str)
+{
+    if (str == NULL)
+        return NULL;
+
+    /* Find the start of the string */
+    while (*str && (*str == ' ' || *str == '\t' || *str == '\n'))
         str++;
 
-    /* If the string is all whitespace*/
-    if (*str == '\0')
-        return (str);
-
-    /* Trim trailing whitespace*/
-    end = str + strlen(str) - 1;
-    while (end > str && _isspace(*end))
+    /* Find the end of the string */
+    const char *end = str + strlen(str) - 1;
+    while (end > str && (*end == ' ' || *end == '\t' || *end == '\n'))
         end--;
 
-    /* Null-terminate the trimmed string*/
-    *(end + 1) = '\0';
+    /* Calculate the length of the trimmed string */
+    size_t trimmed_len = (end - str) + 1;
 
-    return (str);
+    /* Allocate memory for the trimmed string */
+    char *trimmed_str = malloc(trimmed_len + 1);
+    if (trimmed_str == NULL)
+        return NULL;
+
+    /* Copy the trimmed string */
+    strncpy(trimmed_str, str, trimmed_len);
+    trimmed_str[trimmed_len] = '\0';
+
+    return trimmed_str;
 }
+
 
 /**
  * check_alias_syntax - Check the syntax of an alias command
  * @input: Input string to check
  * Return: 1 if the syntax is correct, otherwise return 0
 */
-int check_alias_syntax(char *input)
+int check_alias_syntax(const char *input)
 {
     /* Ensure the input is not NULL*/
     if (input == NULL)
