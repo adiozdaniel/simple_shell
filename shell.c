@@ -34,12 +34,9 @@ char *no_comment(char *in)
     return (in);
 }
 
-
 /**
- * shell - Loop of shell
+ * shell - Main loop of the shell program
  * @datash: data relevant (av, input, args)
- *
- * Return: no return.
  */
 void shell(data_shell *datash)
 {
@@ -59,7 +56,7 @@ void shell(data_shell *datash)
             if (clean_input == NULL)
                 break; /* free(input);*/
 
-            if (strncmp(clean_input, "alias", 5) == 0)
+            if (_alias_strcmp(clean_input, "alias", 5) == 0)
             {
                 char **alias_names = NULL, **alias_values = NULL;
                 if (parse_alias_command(clean_input, &alias_names, &alias_values) == 0)
@@ -87,31 +84,21 @@ void shell(data_shell *datash)
             }
             else
             {
+                int alias_index = check_alias(datash, clean_input);
                 /* Check if the entered command is an alias */
-                for (int i = 0; datash->alias_names[i] != NULL; i++)
+                if (alias_index != -1)
                 {
-                    int results = _alias_strcmp(datash->alias_names[i], clean_input, _strlen(clean_input));
-                    int results2 = strncmp(datash->alias_names[i], clean_input, strlen(clean_input));
-                    printf("checking...%s against %s and got: %d\n", datash->alias_names[i], clean_input, results);
-                    printf("Real results: %d\n", results2);
-
-                    if (strncmp(datash->alias_names[i], clean_input, strlen(clean_input)) == -10)
-                    {
-                        char *alias_value = alias_cmd(datash->alias_values[i]);
-                        // Execute the corresponding alias command
-                        _print("Hooooraaaay, it works!\n");
-                        // Use alias_value as needed
-                        free(alias_value);
+                    char *alias_value = alias_cmd(datash->alias_values[alias_index]);
+                    // system(alias_value);
+                    _print("found alias\n");
+                    free(alias_value);
                         // break;
-                    }
                 }
-
-                if (check_syntax_error(datash, clean_input) == 1)
+                else if (check_syntax_error(datash, clean_input) == 1)
                 {
-                    datash->status = 2;
-
-                    if (clean_input != NULL)
-                        free(clean_input);
+                        datash->status = 2;
+                        if (clean_input != NULL)
+                            free(clean_input);
                 }
                 else
                 {

@@ -100,10 +100,11 @@ int (*get_builtin(char *cmd))(data_shell *datash);
 
 /* _alias */
 void add_alias(data_shell *datash, char *alias_name, char *alias_value);
-char *get_alias(data_shell *datash, char *alias_name);
+// char *get_alias(data_shell *datash, char *alias_name);
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values);
 int use_alias(data_shell *datash, char *alias_name);
 char *alias_cmd(const char *str);
+int check_alias(data_shell *datash, char *input);
 
 /* _alias_utilities*/
 int check_alias_syntax(char *input);

@@ -92,3 +92,23 @@ int _alias_strcmp(const char *s1, const char *s2, size_t n)
 
     return (0);
 }
+
+/**
+ * check_alias - if alias exists
+ * @input: Input string to check
+ * Return: processed str if alias exists, otherwise return NULL
+*/
+int check_alias(data_shell *datash, char *input)
+{
+    int i;
+
+     /* Check if the entered command is an alias */
+    for (i = 0; datash->alias_names[i] != NULL; i++)
+    {
+        printf("checking ....%s: against ....%s\n", datash->alias_names[i], input);
+        if (_alias_strcmp(datash->alias_names[i], input, _strlen(input) - 1) == 0)
+            return (i);
+        continue;
+    }
+    return (-1);/* if elias does not exist */
+}

@@ -47,33 +47,33 @@ void add_alias(data_shell *datash, char *alias_name, char *alias_value)
 }
 
 
-/**
- * get_alias - Retrieves the value of an alias from the shell data structure
- * @datash: Pointer to the data_shell structure
- * @alias_name: Name of the alias to retrieve
- * Return: Value of the alias, or NULL if not found
- */
+// /**
+//  * get_alias - Retrieves the value of an alias from the shell data structure
+//  * @datash: Pointer to the data_shell structure
+//  * @alias_name: Name of the alias to retrieve
+//  * Return: Value of the alias, or NULL if not found
+//  */
 
-char *get_alias(data_shell *datash, char *alias_name)
-{
-    if (datash == NULL || alias_name == NULL) {
-        // Handle NULL pointers
-        return NULL;
-    }
+// char *get_alias(data_shell *datash, char *alias_name)
+// {
+//     if (datash == NULL || alias_name == NULL) {
+//         // Handle NULL pointers
+//         return NULL;
+//     }
 
-    /* Search for the alias */
-    for (int i = 0; datash->alias_names[i] != NULL; i++)
-    {
-        if (datash->alias_names[i] != NULL &&
-            datash->alias_values[i] != NULL &&
-            _alias_strcmp(datash->alias_names[i], alias_name, _strlen(alias_name)) == 0)
-        {
-            return datash->alias_values[i];
-        }
-    }
+//     /* Search for the alias */
+//     for (int i = 0; datash->alias_names[i] != NULL; i++)
+//     {
+//         if (datash->alias_names[i] != NULL &&
+//             datash->alias_values[i] != NULL &&
+//             _alias_strcmp(datash->alias_names[i], alias_name, _strlen(alias_name)) == 0)
+//         {
+//             return datash->alias_values[i];
+//         }
+//     }
 
-    return NULL; // Alias not found
-}
+//     return NULL; // Alias not found
+// }
 
 /**
  * parse_alias_command - Parses an alias command and updates alias_names and alias_values
@@ -86,7 +86,7 @@ char *get_alias(data_shell *datash, char *alias_name)
 int parse_alias_command(const char *input, char ***alias_names, char ***alias_values)
 {
     /* Skip "alias " part */
-    char *alias_cmd = _strdup(input + 6);
+    char *alias_cmd = _strdup(input + 5);
 
     if (alias_cmd == NULL)
         return 1; /* Memory allocation error */
@@ -107,6 +107,8 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
         if (*alias_names == NULL || *alias_values == NULL)
         {
             free(alias_cmd);
+            if (token != NULL)
+                free(token);
             return 1; /* Memory allocation error */
         }
 
@@ -123,6 +125,8 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
 
             if (alias_cmd != NULL)
                 free(alias_cmd);
+            if (token != NULL)
+            free(token);
 
             return 1; /* Memory allocation error */
         }
@@ -149,6 +153,8 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
         free(*alias_names);
         free(*alias_values);
         free(alias_cmd);
+        if (token != NULL)
+            free(token);
 
         return 1; /* Memory allocation error */
     }
@@ -159,6 +165,8 @@ int parse_alias_command(const char *input, char ***alias_names, char ***alias_va
     /* Free temporary memory */
     if (alias_cmd != NULL)
         free(alias_cmd);
+    if (token != NULL)
+        free(token);
 
     return 0; /* Parsing success */
 }
@@ -173,12 +181,9 @@ char *alias_cmd(const char *str)
     int len = _strlen(str);
 
     // Allocate memory for the cleaned string (including space for the null terminator)
-    char *clean_str = _strdup(str);
+    char *clean_str = _strdup(str - 1);
     if (clean_str == NULL)
-    {
-        // Handle memory allocation failure
         return NULL;
-    }
 
     char *current = clean_str;
     const char *tail = str;
